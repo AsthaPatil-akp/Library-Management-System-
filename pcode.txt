@@ -1,0 +1,141 @@
+import mysql.connector as s
+con=s.connect(host='localhost',username='root',password='password@1234',database='libr',autocommit=True)
+if con.is_connected()==False:
+ print("error in connection to database")
+cur=con.cursor()
+def total(x,m):
+    l="select total from books where book_id=%s"
+    data=(x,)
+    c=con.cursor()
+    c.execute(l,data)
+    myresult=c.fetchone()
+    t=myresult[0]+m
+    sql="update books set total=%s where book_id=%s"
+    d=(t,x)
+    c.execute(sql,d)
+def menu():
+    print('''
+OMEN LIBRARY MANAGEMENT SYSTEM
+ENTER 1-Add New Book
+ENTER 2-Issue Book
+ENTER 3-Return Book 
+ENTER 4-Delete Book 
+ENTER 5-Display Book
+ENTER 6-Details Of Issuer
+ENTER 7-To Exit      ''')
+    
+    ch=input("enter your choice: ")
+    if ch=='1':
+        sql='select * from books'
+        c=con.cursor()
+        c.execute(sql)
+        myresult=c.fetchall()
+        print(".......LIST OF BOOKS............BOOK_ID MUST BE UNIQUE WHILE ADDING A BOOK")
+        for i in myresult:
+            print("book id: ",i[0])
+            print("book title: ",i[1])
+            print("book author: ",i[2])
+            print("total books: ",i[3])
+        x=input("enter BOOK ID: ")
+        t=input("enter title of the book: ")
+        a=input("enter author of the book: ")
+        z=input("enter no. of books: ")
+        data=(x,t,a,z)
+        sql='insert into books value(%s,%s,%s,%s)'
+        c=con.cursor()
+        c.execute(sql,data)
+        print("DATA ENTERED SUCESSFULLY")
+        menu()
+        
+    elif ch=='2':
+        sql='select * from books'
+        c=con.cursor()
+        c.execute(sql)
+        myresult=c.fetchall()
+        print(".......LIST OF BOOKS............THE ONES WITH TOTAL BOOKS '0' CAN'T BE ISSUED")
+        for i in myresult:
+            print("book id: ",i[0])
+            print("book title: ",i[1])
+            print("book author: ",i[2])
+            print("total books: ",i[3])
+        n=input("enter your name: ")
+        r=input("enter your mobile no: ")
+        x=input("enter book id : ")
+        d=input("enter date of issue(YYYY-MM-DD): ")
+        data=(n,r,x,d)
+        sql='insert into issue values(%s,%s,%s,%s)'
+        c=con.cursor()
+        c.execute(sql,data)
+        print("BOOK ISSUED TO: ",n)
+        total(x,-1)
+        menu()
+        
+    elif ch=='3':
+        n=input("enter your name: ")
+        r=input("enter your mobile no: ")
+        x=input("enter book id : ")
+        d=input("enter date of returning(YYYY-MM-DD): ")
+        data=(n,r,x,d)
+        sql='insert into returnbook values(%s,%s,%s,%s)'
+        c=con.cursor()
+        c.execute(sql,data)
+        total(x,1)
+        print("BOOK RETURNED")
+        menu()
+    elif ch=='4':
+        sql='select * from books'
+        c=con.cursor()
+        c.execute(sql)
+        myresult=c.fetchall()
+        print(".......LIST OF BOOKS............BOOK_ID MUST BE UNIQUE WHILE ADDING A BOOK")
+        for i in myresult:
+            print("book id: ",i[0])
+            print("book title: ",i[1])
+            print("book author: ",i[2])
+            print("total books: ",i[3])
+        x=input("enter book id : ")
+        data=(x,)
+        sql='delete from books where book_id=%s'
+        c=con.cursor()
+        c.execute(sql,data)
+        print("BOOK HAS BEEN DELETED")
+        menu()
+    elif ch=='5':
+        sql='select * from books'
+        c=con.cursor()
+        c.execute(sql)
+        myresult=c.fetchall()
+        for i in myresult:
+            
+            print("book id: ",i[0])
+            print("book title: ",i[1])
+            print("book author: ",i[2])
+            print("total books: ",i[3])
+        menu()
+    elif ch=='6':
+        sql='select * from issue'
+        c=con.cursor()
+        c.execute(sql)
+        myresult=c.fetchall()
+        for i in myresult:
+
+            print("issuer's name: ",i[0])
+            print("issuer's mobileno: ",i[1])
+            print("date of issuing: ",i[3])
+        menu()
+    elif ch=='7':
+        print("EXITED")
+        exit()
+        
+    else:
+        print("INVALID CHOICE")
+        menu()
+def pswd():
+    p=input("enter a password:")
+    if p=='123':
+        menu()
+        
+    else:
+        print("wrong password try again")
+        pswd()
+pswd()

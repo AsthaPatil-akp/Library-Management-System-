@@ -1,0 +1,24 @@
+create database libr;
+use libr;
+
+create table books (
+    book_id int primary key,
+    book_name varchar(100),
+    author_name varchar(100),
+    price int,
+    total int
+);
+
+create table issue (
+    name varchar(100),
+    mobile_no varchar(15),
+    book_id int,
+    issue_date date
+);
+
+create table returnbook (
+    name varchar(100),
+    mobile_no varchar(15),
+    book_id int,
+    return_date date
+);
